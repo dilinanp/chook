@@ -1,0 +1,192 @@
+##################################################################################################################
+# Specify parameters for the selected problem type in the relevant section.
+#
+#                            Problem type             Section header
+#                           --------------            ---------------
+#                   1 : Tile planting                      [TP]
+#                   2 : Wishart planting                   [WP]
+#                   3 : Deceptive cluster loops            [DCL]
+#                   4 : Equation planting                  [XORSAT]
+#                   5 : k-local planting                   [K_LOCAL]
+#
+##################################################################################################################
+
+
+
+
+# ------------------------------------------ Tile Planting -------------------------------------------------------- #
+[TP]
+
+# Specify the spatial dimension and the linear lattice size L (the number of variables N = L^dimension).
+# The dimension should be set to 2 for square-lattice topology, and 3 for cubic-lattice topology.
+# L must be an even integer greater than two.
+
+dimension = 3
+
+L = 12 
+
+# Specify the probability parameters:
+
+# Parameters for square-lattice problems  (0 <= p1, p2, p3 <= 1  &  p1 + p2 + p3 <= 1.0)
+p1 = 0.2
+p2 = 0.5
+p3 = 0.1
+
+# Parameters for cubic-lattice problems  (0 <= pF22, pF42 <= 1  &  pF22 + pF42 <= 1.0)
+pF22 = 0.1
+pF42 = 0.5
+
+# Specify whether the planted ferromagnetic ground state should be concealed via a gauge transformation (yes/no).
+gauge_transform = yes
+# ---------------------------------------------------------------------------------------------------------------- #
+
+
+
+
+# ---------------------------------------- Wishart Planting ------------------------------------------------------ #
+[WP] 
+
+# Specify the number of variables.
+N = 16 
+
+# Specify the hardness-tuning parameter alpha (alpha > 0.0).
+# Note that the actual value of alpha used in the problem construction will be adjusted such that M = alpha*N 
+# is a positive integer.
+alpha = 0.75
+
+# Specify whether the coupler values should be discretized (yes/no).
+# By default, the problem construction procedure uses Gaussian variates, which renders the resultant couplers to be 
+# real valued. If discretize_couplers is set to 'yes', the construction procedure uses uniform random variables in 
+# {-1, 1}, and the coupler values will be discrete and will assume values in the set
+# { -4*(alpha*N)*(N-1)^2, ..., -4, 0, 4, ..., 4*(alpha*N)*(N-1)^2 }.
+discretize_couplers = no
+
+# Specify whether the planted ferromagnetic ground state should be concealed via a gauge transformation (yes/no).
+gauge_transform = yes
+# ---------------------------------------------------------------------------------------------------------------- #
+
+
+
+
+# ---------------------------------- Deceptive Cluster Loops (DCL) ----------------------------------------------- #
+[DCL] 
+
+# Specify the linear dimensions of the Chimera graph (1 <= Lx, Ly <= 16).
+Lx = 16
+Ly = 16
+
+# Specify the loops-to-nodes ratio alpha (alpha > 0.0).
+# Note that the actual value of alpha used in the problem construction will be adjusted such that M = alpha*N 
+# is a positive integer.
+alpha = 0.24
+
+# Specify the 'ruggedness' R which limits the range of coupler strength. 
+# Must be an integer greater than zero. 
+R = 1
+
+# Scecify the scaling factor lambda by which the inter-cell couplers are multiplied (lambda >= 1.0).
+lambda = 5
+# ---------------------------------------------------------------------------------------------------------------- #
+
+
+
+
+# ------------------------------ Equation Planting (k-regular k-XORSAT)------------------------------------------- #
+[XORSAT]
+
+# Specify the locality k of the terms in the resultant Ising Hamiltonian.
+# This is equivalent to the number of variables per equation in the k-regular k-XORSAT representation.
+k = 3
+
+# Specify the total number of variables N (N>=k).
+# This is equal to the number of equations in the k-regular k-XORSAT representation.
+N = 96
+# ---------------------------------------------------------------------------------------------------------------- #
+
+
+
+
+# ------------------------------------------ k-Local Planting----------------------------------------------------- #
+[K_LOCAL]
+
+# Specify the locality k_max of the highest-order term in the composite Hamiltonian (k_max>2).
+k_max = 5
+
+# Provide a list of identifiers for the constituent subproblems.
+# These subproblem ids will be used as section headers to locate the sections containing the relevant subpropoblem 
+# construction parameters.
+# Each subproblem id should begin with a letter, and may contain a combination of letters and numbers.
+# A subproblem id can be repeated multiple times in subproblem_id_list, if one chooses to use the same subproblem 
+# specification multiple times in the construction of the k-local problem.
+subproblem_id_list = P2, P3, P4
+
+# For each unique subproblem id listed in subproblem_id_list, specify the appropriate subproblem construction 
+# parameters below the section header [<subproblem id>]. 
+# In addition to the problem-specific parameters, each section should define the variable "subproblem_type" to 
+# identify the type of the subproblem being specified.
+# Supported subproblem types are,
+#    1: Bimodal random field model (1-local)
+#    2: Tile planting (2-local)
+#    3: Wishart planting (2-local)
+# Note that for even values of k_max, one should use k_max/2  2-local subproblems.
+# For odd valuses of k_max, one should use (k_max-1)/2  2-local subproblems, and a single 1-local subproblem.   
+
+########## Subproblem 1 ##########
+[P1]
+
+subproblem_type = 2
+
+dimension = 2
+
+L = 4  
+
+p1 = 0.2
+p2 = 0.4
+p3 = 0.2
+
+gauge_transform = yes
+##################################
+
+
+########## Subproblem 2 ##########
+[P2]
+
+subproblem_type = 2
+
+dimension = 3
+
+L = 4  
+
+pF22 = 0.1
+pF42 = 0.5
+
+gauge_transform = yes
+##################################
+
+
+########## Subproblem 3 ##########
+[P3]
+
+subproblem_type = 3
+
+N = 8
+
+alpha = 0.75
+
+discretize_couplers = yes
+
+gauge_transform = yes
+##################################
+
+
+########## Subproblem 4 ##########
+[P4]
+
+subproblem_type = 1
+
+# Number of spins
+N = 10
+##################################
+
+
+# ---------------------------------------------------------------------------------------------------------------- #
