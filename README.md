@@ -1,5 +1,5 @@
 # Chook #
-#### Version 1.0.0 (Release date: April 29, 2020) ####
+#### Version 0.1.0 (Release date: April 29, 2020) ####
 
 Chook is a comprehensive suite for generating binary optimization problems with planted solutions.
 Chook currently supports the following problem types:
