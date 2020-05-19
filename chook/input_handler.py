@@ -3,7 +3,6 @@ import configparser
 import sys
 import numpy as np
 from collections import Counter
-from chook.constants import ProblemTypes
 
 def positive_int(value):
     ivalue = int(value)
@@ -24,20 +23,22 @@ def parse_comm_line_params():
                    " ", \
             formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument("problem_type", type=int, choices=[p.value for p in ProblemTypes], metavar="problem_type", 
+    parser.add_argument("problem_type", choices=['TP', 'WP', 'DCL', 'XORSAT', 'K_LOCAL'], metavar="problem_type", type=str.upper, 
                                 help="Choose a problem type from the following options: \n"
-                                     "  1 : Tile planting \n"
-                                     "  2 : Wishart planting \n"
-                                     "  3 : Deceptive cluster loops (DCL) \n"
-                                     "  4 : Equation planting (k-regular k-XORSAT)\n"
-                                     "  5 : k-local planting \n"
+                                     "  TP      : Tile planting \n"
+                                     "  WP      : Wishart planting \n"
+                                     "  DCL     : Deceptive cluster loops (DCL) \n"
+                                     "  XORSAT  : Equation planting (k-regular k-XORSAT)\n"
+                                     "  K_LOCAL : k-local planting \n"
                                      " ")
 
     parser.add_argument("config_file", help="Configuration file containing problem-type-specific parameters")
 
     parser.add_argument("-n", help="The number of problem instances to be generated (default: 10)", type=positive_int, dest="no_of_instances", metavar="num_instances", default=10)
-    parser.add_argument("-o", help="Output format: ising/hobo (default: ising)", dest="output_format", metavar="output_format", choices=["ising", "hobo"], default="ising")
-    parser.add_argument("-f", help="File format: txt/json (default: txt)", dest="file_format", metavar="file_format", choices=["txt", "json"], default="txt")
+    parser.add_argument("-o", help="Output format: ising/hobo (default: ising)", dest="output_format", metavar="output_format", 
+                            choices=["ising", "hobo"], default="ising", type=str.lower)
+    parser.add_argument("-f", help="File format: txt/json (default: txt)", dest="file_format", metavar="file_format", 
+                            choices=["txt", "json"], default="txt", type=str.lower)
 
 
     args = parser.parse_args()
@@ -46,7 +47,7 @@ def parse_comm_line_params():
     params = {}
 
     params['num_instances']  = args.no_of_instances
-    params['problem_type']  = ProblemTypes(args.problem_type).name
+    params['problem_type']  = args.problem_type.upper()
     params['config_file'] = args.config_file
     params['file_format'] = args.file_format 
 
@@ -72,7 +73,7 @@ def read_config_file(params):
         print('\nUnable to read configuration file {} \n'.format(params['config_file']))
         sys.exit()
     except:
-        err_msg += 'Invalid configuration file format for problem_type {}.\n'.format( ProblemTypes[params['problem_type']].value ) 
+        err_msg += 'Invalid configuration file format for problem_type {}.\n'.format(params['problem_type']) 
         err_msg += 'Parameter initialization should be followed by the section header [{}].\n'.format(params['problem_type'])
         print(err_msg)
         sys.exit()
@@ -85,7 +86,7 @@ def read_config_file(params):
         if not config.has_section(params['problem_type']):
             raise KeyError
     except:
-        err_msg += 'Invalid configuration file format for problem_type {}.\n'.format( ProblemTypes[params['problem_type']].value ) 
+        err_msg += 'Invalid configuration file format for problem_type {}.\n'.format(params['problem_type']) 
         err_msg += 'Parameter initialization should be followed by the section header [{}].\n'.format(params['problem_type'])
         print(err_msg)
         sys.exit() 
@@ -447,13 +448,13 @@ def read_config_file(params):
 
             for pId in params['K_LOCAL']['subproblem_ids']:
                 try:
-                    params['K_LOCAL']['subproblem_types'].append( int(config[pId]['subproblem_type']) )        
+                    params['K_LOCAL']['subproblem_types'].append( config[pId]['subproblem_type'].upper() )        
 
-                    if not ( int(config[pId]['subproblem_type']) in [1, 2, 3] ):
+                    if not ( config[pId]['subproblem_type'] in ['TP', 'WP', 'RF'] ):
                         raise ValueError
                 except ValueError:
                     err_msg += 'Invalid value for [{}]->subproblem_type.\n'.format(pId)
-                    err_msg += 'Acceptable values: 1, 2, 3 \n\n'
+                    err_msg += 'Acceptable values: RF, TP, WP \n\n'
                     err_occurred = True 
                 except:
                     err_msg += 'Unable to read required parameter [{}]->subproblem_type.\n\n'.format(pId)
@@ -461,7 +462,7 @@ def read_config_file(params):
 
 
         if not err_occurred:
-            subproblem_localities = [ 1 if sub_type==1 else 2 for sub_type in params['K_LOCAL']['subproblem_types'] ]
+            subproblem_localities = [ 1 if sub_type=='RF' else 2 for sub_type in params['K_LOCAL']['subproblem_types'] ]
 
             if np.sum(np.array(subproblem_localities)*np.array(params['K_LOCAL']['subproblem_count'])) != params['K_LOCAL']['k']:
                 err_msg += 'Invalid subproblem specifications in [K_LOCAL].\n'
@@ -478,7 +479,7 @@ def read_config_file(params):
             for subproblem_id, subproblem_type, subproblem_count in zip(params['K_LOCAL']['subproblem_ids'], params['K_LOCAL']['subproblem_types'], params['K_LOCAL']['subproblem_count']):
                 subproblem_params = {}
 
-                if subproblem_type == 1:
+                if subproblem_type == 'RF':
 
                     try:
                         subproblem_params['N'] = int(config[subproblem_id]['N'])
@@ -496,7 +497,7 @@ def read_config_file(params):
                     if not err_occurred:
                         system_sizes.append(subproblem_params['N'])
                     
-                elif subproblem_type == 2:
+                elif subproblem_type == 'TP':
                     
                     subproblem_params['dimension'] = None
 
@@ -580,7 +581,7 @@ def read_config_file(params):
                         system_sizes.append(subproblem_params['length']**subproblem_params['dimension'])
                     
 
-                elif subproblem_type == 3:
+                elif subproblem_type == 'WP':
 
                     try:
                         subproblem_params['length'] = int(config[subproblem_id]['N'])

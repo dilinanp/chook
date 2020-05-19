@@ -2,12 +2,12 @@
 # Specify parameters for the selected problem type in the relevant section.
 #
 #                            Problem type             Section header
-#                           --------------            ---------------
-#                   1 : Tile planting                      [TP]
-#                   2 : Wishart planting                   [WP]
-#                   3 : Deceptive cluster loops            [DCL]
-#                   4 : Equation planting                  [XORSAT]
-#                   5 : k-local planting                   [K_LOCAL]
+#                          --------------------       ---------------
+#                           Tile planting                 [TP]
+#                           Wishart planting              [WP]
+#                           Deceptive cluster loops       [DCL]
+#                           Equation planting             [XORSAT]
+#                           k-local planting              [K_LOCAL]
 #
 ##################################################################################################################
 
@@ -125,16 +125,16 @@ subproblem_id_list = P2, P3, P4
 # In addition to the problem-specific parameters, each section should define the variable "subproblem_type" to 
 # identify the type of the subproblem being specified.
 # Supported subproblem types are,
-#    1: Bimodal random field model (1-local)
-#    2: Tile planting (2-local)
-#    3: Wishart planting (2-local)
+#    RF: Bimodal random field model (1-local)
+#    TP: Tile planting (2-local)
+#    WP: Wishart planting (2-local)
 # Note that for even values of k_max, one should use k_max/2  2-local subproblems.
 # For odd valuses of k_max, one should use (k_max-1)/2  2-local subproblems, and a single 1-local subproblem.   
 
 ########## Subproblem 1 ##########
 [P1]
 
-subproblem_type = 2
+subproblem_type = TP
 
 dimension = 2
 
@@ -151,7 +151,7 @@ gauge_transform = yes
 ########## Subproblem 2 ##########
 [P2]
 
-subproblem_type = 2
+subproblem_type = TP
 
 dimension = 3
 
@@ -167,7 +167,7 @@ gauge_transform = yes
 ########## Subproblem 3 ##########
 [P3]
 
-subproblem_type = 3
+subproblem_type = WP
 
 N = 8
 
@@ -182,7 +182,7 @@ gauge_transform = yes
 ########## Subproblem 4 ##########
 [P4]
 
-subproblem_type = 1
+subproblem_type = RF
 
 # Number of spins
 N = 10

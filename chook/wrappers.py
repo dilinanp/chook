@@ -109,16 +109,16 @@ def klocal_wrapper(subproblem_types, subproblem_count, subproblem_params, conver
 
     for subprob_type, subprob_count, subprob_params in zip(subproblem_types, subproblem_count, subproblem_params):
 
-        if subprob_type==1:
+        if subprob_type=='RF':
             bonds, E0 = klocal.one_local_problem(subprob_params['N'], convert_to_hobo)        
 
             N = subprob_params['N'] 
 
-        elif subprob_type==2:
+        elif subprob_type=='TP':
             bonds, E0 = tile_planting_wrapper(subprob_params['length'], subprob_params['dimension'], subprob_params['tile_params'], subprob_params['gauge_transform'], convert_to_hobo)       
             N = subprob_params['length']**subprob_params['dimension']
 
-        elif subprob_type==3:
+        elif subprob_type=='WP':
             bonds, E0 = wishart_planting_wrapper(subprob_params['length'], subprob_params['M'], subprob_params['discretize_couplers'], subprob_params['gauge_transform'], convert_to_hobo)
             N = subprob_params['length']
 

@@ -4,7 +4,6 @@ import sys
 import csv
 import json
 import sys
-from chook.constants import ProblemTypes
 
 class NumpyToJsonEncoder(json.JSONEncoder):
     def default(self, obj):

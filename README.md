@@ -1,13 +1,20 @@
 # Chook #
-#### Version 0.1.0 (Release date: April 29, 2020) ####
+#### Version 0.1.0 (Release date: May 19, 2020) ####
+
+## License ##
+
+This software is shared under an Apache License (attached). We ask you to
+please cite the paper if you choose to use chook. Thank you. 
+
+## Description ##
 
 Chook is a comprehensive suite for generating binary optimization problems with planted solutions.
 Chook currently supports the following problem types:
-1. Tile planting (2D/3D) 
-2. Wishart planting 
-3. Deceptive cluster loops (DCL)
-4. Equation planting (k-regular k-XORSAT)
-5. k-local planting
+* Tile planting (2D/3D) 
+* Wishart planting 
+* Deceptive cluster loops (DCL)
+* Equation planting (k-regular k-XORSAT)
+* k-local planting
 
 ## Requirements ##
 
@@ -34,12 +41,12 @@ chook problem_type config_file [-h] [-n num_instances] [-o output_format] [-f fi
 ```
 #### Required arguments ####
 * **problem_type:**
-Choose the type of problems to be generated. Allowed options: {1, 2, 3, 4, 5}
-1. Tile planting (2D/3D) 
-2. Wishart planting 
-3. Deceptive cluster loops (DCL)
-4. Equation planting (k-regular k-XORSAT)  
-5. k-local planting
+Choose the type of problems to be generated. Allowed options: {`TP`, `WP`, `DCL`, `XORSAT`, `K_LOCAL`}
+    * `TP`      : Tile planting (2D/3D) 
+    * `WP`      : Wishart planting 
+    * `DCL`     : Deceptive cluster loops (DCL)
+    * `XORSAT`  : Equation planting (k-regular k-XORSAT)  
+    * `K_LOCAL` : k-local planting
                      
 * **config_file:**
 Configuration file containing problem-type specific parameters. 

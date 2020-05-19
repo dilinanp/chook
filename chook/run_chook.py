@@ -1,7 +1,6 @@
 from  chook.wrappers import *
 from chook.file_handler import *
 from chook.input_handler import read_input
-from chook.constants import ProblemTypes
 import sys
 
 def run():
@@ -55,7 +54,7 @@ def run():
     if params['problem_type'] in ['TP', 'WP', 'XORSAT', 'K_LOCAL']:
         write_gs_info(dir_name, gs_info)
 
-    print('\nSuccessfully generated', params['num_instances'], 'instances of problem type', ProblemTypes[ params['problem_type'] ].value, "in directory '%s'." % dir_name, '\n');
+    print('\nSuccessfully generated', params['num_instances'], 'instances of problem type', params['problem_type'], "in directory '%s'." % dir_name, '\n');
 
 
 if __name__ == '__main__':
