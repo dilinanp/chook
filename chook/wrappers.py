@@ -123,7 +123,7 @@ def klocal_wrapper(subproblem_types, subproblem_count, subproblem_params, conver
             N = subprob_params['length']
 
         for n in range(subprob_count):
-            subproblems.append( klocal.Problem(bonds, N, E0) )
+            subproblems.append( klocal.Problem(bonds, N, E0, convert_to_hobo) )
     
     result = klocal.build_klocal_problem(subproblems)
     

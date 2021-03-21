@@ -671,7 +671,7 @@ def read_config_file(params):
 
 
         if not err_occurred:
-            params['K_LOCAL']['total_spins'] = np.sum( np.array(system_sizes)*np.array(params['K_LOCAL']['subproblem_count']) )
+            params['K_LOCAL']['total_spins'] = max(system_sizes)
 
 
     else: # Invalid problem type

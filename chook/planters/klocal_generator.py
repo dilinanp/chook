@@ -21,39 +21,64 @@ def one_local_problem(N, convert_to_qubo=False):
 
 
 class Problem:
-
-    def __init__(self, bonds, num_spins, gs_energy):
+    def __init__(self, bonds, num_spins, gs_energy, in_hobo_format=False):
         self.bonds = bonds
         self.num_spins = num_spins
         self.gs_energy = gs_energy 
+        self.in_hobo_format = in_hobo_format
 
     def combine(self, prob):
-        H = []
+        self.bonds.append( (-self.gs_energy, ) )
+        prob.bonds.append( (-prob.gs_energy, ) )
+
+        E = 0
+        indices_list = []
+        weights_list = []
 
         for bond1 in self.bonds:
             for bond2 in prob.bonds:
-                w = bond1[-1]*bond2[-1]
+                weight = bond1[-1]*bond2[-1]
+                indices = self.get_nonvanishing_spin_indices(bond1, bond2)
+        
+                if indices:
+                    if indices in indices_list:
+                        weights_list[indices_list.index(indices)] += weight
+                    else:
+                        indices_list.append(indices)
+                        weights_list.append(weight)
+                else:
+                    E -= weight
 
-                if abs(w) > 1.0e-10:
-                    H.append( bond1[:-1] + tuple(val+self.num_spins for val in bond2[:-1]) + (w, ) )
+        H = []
 
-        for bond1 in self.bonds:
-            w = -prob.gs_energy*bond1[-1]
+        for indices, weight in zip(indices_list, weights_list):
+            if abs(weight) > 1.0e-10:
+                H.append(tuple(indices) + (weight,))
+                
+        N = max(self.num_spins, prob.num_spins)
 
-            if abs(w) > 1.0e-10:
-                H.append( bond1[:-1] + (w, ) )
 
-        for bond2 in prob.bonds:
-            w = -self.gs_energy*bond2[-1]
+        return Problem(H, N, E, self.in_hobo_format)
 
-            if abs(w) > 1.0e-10:
-                H.append( tuple(val+self.num_spins for val in bond2[:-1]) + (w, ) )
+    def get_nonvanishing_spin_indices(self, bond1, bond2):
+        temp_indices = bond1[:-1]+bond2[:-1]
+        
+        if self.in_hobo_format:
+            return list(set(temp_indices))
+        else:
+            existing_elems = set()
+            repeating_elems = []
 
-        E = -self.gs_energy*prob.gs_energy
-                 
-        N = self.num_spins + prob.num_spins
+            for x in temp_indices:
+                if x in existing_elems:
+                    repeating_elems.append(x)
+                existing_elems.add(x)
 
-        return Problem(H, N, E)
+            nonvanishing_elems = existing_elems - set(repeating_elems)
+            
+            return list(nonvanishing_elems)
+
+
 
 
 def build_klocal_problem(subproblems):

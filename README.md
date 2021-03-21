@@ -1,5 +1,5 @@
 # Chook #
-#### Version 0.1.0 (Release date: May 19, 2020) ####
+#### Version 0.2.0 (Release date: March 21, 2021) ####
 
 ## License ##
 
