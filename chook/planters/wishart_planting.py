@@ -36,7 +36,7 @@ def generate_problem(num_nodes,
     if discretize_bonds:
         R = np.random.choice([-1, 1], (num_nodes, M))
     else:
-        R = np.randn(num_nodes, M)
+        R = np.random.randn(num_nodes, M)
 
         if num_decimals_R is not None:
             R = R.round(decimals=num_decimals_R)
