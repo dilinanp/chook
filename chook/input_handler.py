@@ -251,6 +251,7 @@ def read_config_file(params):
             err_msg += 'Unable to read required parameter [WP]->discretize_couplers.\n\n'
             err_occurred = True
 
+
 # Apply guage transform?
         try:
             if not config['WP']['gauge_transform']:
