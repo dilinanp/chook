@@ -266,7 +266,7 @@ def get_random_rot():
     # count. Also, to be uniform over rotations, choose a y rotation
     # w/Pr 4/6 and a z with 2/6.
 
-    from scipy import cos, sin, pi
+    from numpy import cos, sin, pi
 
     kX = int(np.random.rand() * 4)
     # This avoids double-counting of the 0 and pi cases.
