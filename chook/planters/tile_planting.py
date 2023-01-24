@@ -1,4 +1,4 @@
-import scipy as sp
+import numpy as np
 
 def generate_3D_problem(L, p2FP=0.05, p4FP=0.05):
 
@@ -33,7 +33,7 @@ def generate_3D_problem(L, p2FP=0.05, p4FP=0.05):
     N_max = N
     L_max = L
     
-    J = sp.zeros((num_nodes, num_nodes))
+    J = np.zeros((num_nodes, num_nodes))
 
     for l in range(L_max):
         M_offset = l%2
@@ -57,7 +57,7 @@ def generate_3D_problem(L, p2FP=0.05, p4FP=0.05):
                 J_vox = sample_voxel(p2FP, p4FP)
     
                 # Put into problem
-                J[ sp.ix_(voxel_vars, voxel_vars) ] = J_vox
+                J[ np.ix_(voxel_vars, voxel_vars) ] = J_vox
     
     return J
 
@@ -81,8 +81,8 @@ def generate_2D_problem(L, p1, p2, p3):
     M_max = M
     N_max = N
     
-    J = sp.zeros((num_nodes, num_nodes))
-    h = sp.zeros((num_nodes,))
+    J = np.zeros((num_nodes, num_nodes))
+    h = np.zeros((num_nodes,))
 
     for n in range(N_max):
         M_offset = n%2
@@ -100,10 +100,10 @@ def generate_2D_problem(L, p1, p2, p3):
             J_plaq = sample_plaquette(p1, p2, p3)
             # FIX!! This does *not* break the degeneracy, but it makes
             # things more difficult for SA.
-            #J_plaq = sp.rand()*J_plaq
+            #J_plaq = np.random.rand()*J_plaq
              
             # Put into problem
-            J[ sp.ix_(plaquette_vars, plaquette_vars)] = J_plaq
+            J[ np.ix_(plaquette_vars, plaquette_vars)] = J_plaq
     
     return J
 
@@ -121,13 +121,13 @@ def sample_voxel(p2FP, p4FP):
     pC41 = 0.
     #pC41 = 1.
           
-    R = sp.rand()
+    R = np.random.rand()
 
     if R < p2FP:
         # Make "root" voxel with 2 frustrated plaquettes
         J_vox_2FP = make_voxel_adj()
-        if sp.rand() < pC21:
-        #if sp.rand() < 0.5:
+        if np.random.rand() < pC21:
+        #if np.random.rand() < 0.5:
             # C2,1: A single FM bond. 12 distinct elements following
             # 48 transformations in Oh. One bond broken in GS; 1 GS
             # mod Z2.
@@ -143,8 +143,8 @@ def sample_voxel(p2FP, p4FP):
 
         # 4 frustrated plaquettes
         J_vox_4FP = make_voxel_adj()
-        if sp.rand() < pC41:
-        #if sp.rand() < 0.5:
+        if np.random.rand() < pC41:
+        #if np.random.rand() < 0.5:
             # C4,1: Perpendicular/opposite FM bonds. 24 distinct
             # elements following 48 transformations in Oh. Two bonds
             # broken in GS; 2 GS mod Z2.
@@ -191,11 +191,11 @@ def transform_voxel(J_vox, use_rotation=True, use_inversion=True):
     # This is to pad with zeros and ensure length 3
     format_str = "{0:0"+str(3)+"b}"
 
-    U = sp.zeros((3,8),dtype=sp.int64)
+    U = np.zeros((3,8),dtype=np.int64)
     for i in range(8):
         u_str = format_str.format(i)
         U[:,i] = [int(u) for u in u_str]
-    U = sp.flipud(U)
+    U = np.flipud(U)
 
     # Translate to [-1,1] vertices
     V = 2*U-1
@@ -205,7 +205,7 @@ def transform_voxel(J_vox, use_rotation=True, use_inversion=True):
         R = get_random_rot()
     else:
         # No rotation
-        R = sp.eye( len(V) )
+        R = np.eye( len(V) )
 
     V_prime = R.dot(V)
     U_prime = (V_prime+1)/2
@@ -215,19 +215,19 @@ def transform_voxel(J_vox, use_rotation=True, use_inversion=True):
     # the origin", but then translate back so corner (-1,-1,-1) is at
     # the origin.
     if use_inversion is True:
-        if sp.rand() < 0.5:
+        if np.random.rand() < 0.5:
             U_prime *= -1
-            U_prime += sp.ones((3,1)).dot(sp.ones((1,8)))
+            U_prime += np.ones((3,1)).dot(np.ones((1,8)))
 
     # Get the mapped variable indices, i.e. variable i maps to
     # corresponding
-    I_prime = sp.array( [[1,2,4]]).dot(U_prime)
+    I_prime = np.array( [[1,2,4]]).dot(U_prime)
 
-    I_prime = sp.int64( I_prime[0,:] )
+    I_prime = np.int64( I_prime[0,:] )
     
     # Need to invert the map
-    I_P_inv = sp.argsort(I_prime)
-    J_vox_prime = J_vox[sp.ix_(I_P_inv,I_P_inv)]
+    I_P_inv = np.argsort(I_prime)
+    J_vox_prime = J_vox[np.ix_(I_P_inv,I_P_inv)]
         
     return J_vox_prime
 
@@ -254,14 +254,14 @@ def get_random_rot():
 
     from scipy import cos, sin, pi
     
-    kX = int( sp.rand()*4 )
+    kX = int( np.random.rand()*4 )
     # This avoids double-counting of the 0 and pi cases.
-    if sp.rand() < 4./6:
-        kY = int( sp.rand()*4 )
+    if np.random.rand() < 4./6:
+        kY = int( np.random.rand()*4 )
         kZ = 0.
     else:
         kY = 0.
-        kZ = 1+2*int( sp.rand()*2 )
+        kZ = 1+2*int( np.random.rand()*2 )
 
     # # print kX,kY,kZ
     
@@ -269,16 +269,16 @@ def get_random_rot():
     thetaY = kY*pi/2
     thetaZ = kZ*pi/2
 
-    Rx = sp.array( [[1,0,0],[0,cos(thetaX),sin(thetaX)],[0,-sin(thetaX),cos(thetaX)]] )
-    Ry = sp.array( [[cos(thetaY),0,-sin(thetaY)],[0,1,0],[sin(thetaY),0,cos(thetaY)]] )
-    Rz = sp.array( [[cos(thetaZ),sin(thetaZ),0],[-sin(thetaZ),cos(thetaZ),0],[0,0,1]] )
+    Rx = np.array( [[1,0,0],[0,cos(thetaX),sin(thetaX)],[0,-sin(thetaX),cos(thetaX)]] )
+    Ry = np.array( [[cos(thetaY),0,-sin(thetaY)],[0,1,0],[sin(thetaY),0,cos(thetaY)]] )
+    Rz = np.array( [[cos(thetaZ),sin(thetaZ),0],[-sin(thetaZ),cos(thetaZ),0],[0,0,1]] )
 
     # Round is because they should all be integers anyway!
     return ( Rz.dot(Ry.dot(Rx)) ).round()
 
 def make_voxel_adj():
 
-    vox_adj_mat = sp.zeros((8,8),dtype=sp.int32)
+    vox_adj_mat = np.zeros((8,8),dtype=np.int32)
 
     # Set manually
     
@@ -312,7 +312,7 @@ def sample_plaquette(p1, p2, p3, normalize_GS=False):
 
     # Note that this (may) return an *integer-valued* matrix, but when put into full problem in generate_2D_problem, gets converted to real.
 
-    R = sp.rand()
+    R = np.random.rand()
     if R < p1:
         num_GS = 1
     elif R < p1+p2:
@@ -323,10 +323,10 @@ def sample_plaquette(p1, p2, p3, normalize_GS=False):
         num_GS = 4
 
     J_plaq = 2*make_plaquette_adj()
-    edges = sp.where(sp.triu(J_plaq))
+    edges = np.where(np.triu(J_plaq))
     num_edges = len(edges[0]) # i.e 4
 
-    P = sp.random.permutation(num_edges)
+    P = np.random.permutation(num_edges)
     # Set the weak edges
     for e in P[0:num_GS]:
         (v1,v2) = edges[0][e],edges[1][e]
@@ -340,8 +340,8 @@ def sample_plaquette(p1, p2, p3, normalize_GS=False):
 
     # Scale such that each cycle has the same GS energy
     if normalize_GS:
-        J_plaq = sp.float64(J_plaq)
-        minus_EGS = sp.triu(J_plaq).sum()
+        J_plaq = np.float64(J_plaq)
+        minus_EGS = np.triu(J_plaq).sum()
         J_plaq /= minus_EGS
 
     return J_plaq
@@ -349,7 +349,7 @@ def sample_plaquette(p1, p2, p3, normalize_GS=False):
 
 def make_plaquette_adj():
 
-    plaquette_adj_mat = sp.zeros((4,4),dtype=sp.int32)
+    plaquette_adj_mat = np.zeros((4,4),dtype=np.int32)
 
     plaquette_adj_mat[0,1] = 1
     plaquette_adj_mat[0,2] = 1
