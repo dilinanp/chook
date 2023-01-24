@@ -1,6 +1,10 @@
 import numpy as np
 
-def generate_problem(num_nodes, M=1, discretize_bonds=False, num_decimals_R=None):
+
+def generate_problem(num_nodes,
+                     M=1,
+                     discretize_bonds=False,
+                     num_decimals_R=None):
 
     # Generate a K_num_nodes (complete graph) Ising weight matrix J with the
     # (+)^num_nodes state as a planted GS.
@@ -21,28 +25,28 @@ def generate_problem(num_nodes, M=1, discretize_bonds=False, num_decimals_R=None
     # range uniform discrete distribution in [-range,+range]...
 
     # Plants the FM GS
-    t = np.ones( (num_nodes, 1) )
-    
+    t = np.ones((num_nodes, 1))
+
     # Sample correlated Gaussian with covariance matrix sigma
     # Note: rank(sigma) = num_nodes-1
-    sigma = num_nodes/(num_nodes-1.)*np.eye( num_nodes ) - 1./(num_nodes-1)*t.dot( t.T )
-    sigma_sqrt = np.sqrt((num_nodes-1.)/num_nodes)*sigma
+    sigma = num_nodes / (num_nodes - 1.) * np.eye(num_nodes) - 1. / (
+        num_nodes - 1) * t.dot(t.T)
+    sigma_sqrt = np.sqrt((num_nodes - 1.) / num_nodes) * sigma
 
     if discretize_bonds:
-        R = np.random.choice([-1,1], (num_nodes, M))
+        R = np.random.choice([-1, 1], (num_nodes, M))
     else:
         R = np.randn(num_nodes, M)
 
         if num_decimals_R is not None:
-                R = R.round(decimals=num_decimals_R)
-
+            R = R.round(decimals=num_decimals_R)
 
     W = sigma_sqrt.dot(R)
-    J_tilde = -1./num_nodes*W.dot(W.T)
+    J_tilde = -1. / num_nodes * W.dot(W.T)
     J = J_tilde - np.diag(np.diag(J_tilde))
 
     if discretize_bonds:
-        J *= num_nodes*num_nodes*(num_nodes-1)
+        J *= num_nodes * num_nodes * (num_nodes - 1)
         J = J.round().astype(int)
 
     return J
