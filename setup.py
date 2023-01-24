@@ -17,6 +17,6 @@ setup(
     author='Dilina Perera, Inimfon Akpabio',
     author_email='dilinanp@gmail.com',
     python_requires='>=3.4',
-    install_requires=['scipy', 'more-itertools'],
+    install_requires=['numpy', 'more-itertools'],
     data_files=[('', ['params.in'])],
     entry_points={'console_scripts': ['chook=chook.__main__:main',]})
