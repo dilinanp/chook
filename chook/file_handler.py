@@ -78,6 +78,12 @@ def write_gs_info(dir_name, gs_info):
 
 
 
+def write_ps_info(dir_name, ps_info):
+
+    write_text_file(os.path.join(dir_name, 'planted_solution.txt'), ps_info)
+
+
+
 def write_text_file(path_to_file, records):
 
     with open(path_to_file, "w") as the_file:

@@ -23,8 +23,7 @@ def run():
             gs_info.append( (file_name, E0) )
 
         elif params['problem_type'] == 'WP':
-
-            bonds, E0 = wishart_planting_wrapper(params['WP']['length'], params['WP']['M'], params['WP']['discretize_couplers'], params['WP']['gauge_transform'], params['convert_to_hobo'])
+            bonds, E0, ps_info = wishart_planting_wrapper(params['WP']['length'], params['WP']['M'], params['WP']['planted_solution'], params['WP']['discretize_couplers'], params['WP']['gauge_transform'], params['convert_to_hobo'])
 
             gs_info.append( (file_name, E0) )
 
@@ -49,6 +48,8 @@ def run():
     
 
         write_instance(dir_name, file_name, bonds, params)
+        if params['problem_type'] == 'WP':
+            write_ps_info(dir_name, ps_info)
 
 
     if params['problem_type'] in ['TP', 'WP', 'XORSAT', 'K_LOCAL']:

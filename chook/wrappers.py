@@ -43,9 +43,9 @@ def tile_planting_wrapper(length, dimension, tile_params, gauge_transform=True, 
 
 
 
-def wishart_planting_wrapper(length, M, discretize_couplers=False, gauge_transform=True, convert_to_hobo=False):
+def wishart_planting_wrapper(length, M, planted_solution=None, discretize_couplers=False, gauge_transform=True, convert_to_hobo=False):
 
-    J = wp.generate_problem(length, M, discretize_bonds=discretize_couplers)
+    J, t = wp.generate_problem(length, M, planted_solution, discretize_bonds=discretize_couplers)
 
     if discretize_couplers:
         i_indices, j_indices = np.nonzero(np.triu(J))
@@ -67,7 +67,7 @@ def wishart_planting_wrapper(length, M, discretize_couplers=False, gauge_transfo
         bonds, dE = ising_to_hobo(bonds)
         E0 += dE
 
-    return bonds, E0
+    return bonds, E0, t
 
 
 

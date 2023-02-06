@@ -61,6 +61,12 @@ alpha = 0.75
 # { -4*(alpha*N)*(N-1)^2, ..., -4, 0, 4, ..., 4*(alpha*N)*(N-1)^2 }.
 discretize_couplers = no
 
+# Specify whether the plated solution is given.
+# If yes, please write the planted solution you define as "planted_solution."
+# If no, please write "no."
+given_solution = yes
+planted_solution = 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1
+
 # Specify whether the planted ferromagnetic ground state should be concealed via a gauge transformation (yes/no).
 gauge_transform = yes
 # ---------------------------------------------------------------------------------------------------------------- #
