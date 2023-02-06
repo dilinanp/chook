@@ -1,7 +1,7 @@
 import scipy as sp
 from scipy import linalg
 
-def generate_problem(num_nodes, M=1, discretize_bonds=False, num_decimals_R=None):
+def generate_problem(num_nodes, M=1, planted_solution=None, discretize_bonds=False, num_decimals_R=None):
 
     # Generate a K_num_nodes (complete graph) Ising weight matrix J with the
     # (+)^num_nodes state as a planted GS.
@@ -22,8 +22,13 @@ def generate_problem(num_nodes, M=1, discretize_bonds=False, num_decimals_R=None
     # range uniform discrete distribution in [-range,+range]...
 
     # Plants the FM GS
-    t = sp.ones( (num_nodes, 1) )
-    
+    # Note: if planted solution is not given, t is an array filled with ones.
+    if planted_solution is not None:
+        t = planted_solution.reshape(-1, 1)
+    else:
+        t = sp.ones( (num_nodes, 1) )
+
+
     # Sample correlated Gaussian with covariance matrix sigma
     # Note: rank(sigma) = num_nodes-1
     sigma = num_nodes/(num_nodes-1.)*sp.eye( num_nodes ) - 1./(num_nodes-1)*t.dot( t.T )
@@ -46,4 +51,4 @@ def generate_problem(num_nodes, M=1, discretize_bonds=False, num_decimals_R=None
         J *= num_nodes*num_nodes*(num_nodes-1)
         J = J.round().astype(int)
 
-    return J
+    return J, t

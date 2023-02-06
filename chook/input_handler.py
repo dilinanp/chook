@@ -178,7 +178,6 @@ def read_config_file(params):
             err_msg += 'Unable to read required parameter [TP]->gauge_transform.\n\n'
             err_occurred = True
 		
-        
     elif params['problem_type'] == 'WP':
         try:
             params['WP']['length'] = int(config['WP']['N'])
@@ -220,6 +219,31 @@ def read_config_file(params):
             err_occurred = True
         except:
             err_msg += 'Unable to read required parameter [WP]->discretize_couplers.\n\n'
+            err_occurred = True
+
+
+        # Given planted solution?
+        try:
+            if not config['WP']['given_solution']:
+                raise KeyError
+            else:
+                params['WP']['given_solution'] = config['WP'].getboolean('given_solution')
+
+            if not params['WP']['given_solution']:
+                pass
+            else:
+                if not config['WP']['planted_solution']:
+                    raise KeyError
+                else:
+                    params['WP']['planted_solution'] = np.array([int(ti) for ti in config['WP']['planted_solution'].split(',')])
+                    # if sum([ti^2 for ti in params['WP']['planted_solution']]) != len(params['WP']['planted_solution']):
+                    #     raise ValueError('+1 or -1 are available in planted_solution.')
+        except ValueError:
+            err_msg += 'Invalid response for [WP]->planted_solution.\n'
+            err_msg += 'Valid responses: an array filled with +1 or -1/no \n\n'
+            err_occurred = True
+        except:
+            err_msg += 'Unable to read required parameter [WP]->planted_solution.\n\n'
             err_occurred = True
 
 
