@@ -230,14 +230,12 @@ def read_config_file(params):
                 params['WP']['given_solution'] = config['WP'].getboolean('given_solution')
 
             if not params['WP']['given_solution']:
-                pass
+                params['WP']['planted_solution'] = None
             else:
                 if not config['WP']['planted_solution']:
                     raise KeyError
                 else:
                     params['WP']['planted_solution'] = np.array([int(ti) for ti in config['WP']['planted_solution'].split(',')])
-                    # if sum([ti^2 for ti in params['WP']['planted_solution']]) != len(params['WP']['planted_solution']):
-                    #     raise ValueError('+1 or -1 are available in planted_solution.')
         except ValueError:
             err_msg += 'Invalid response for [WP]->planted_solution.\n'
             err_msg += 'Valid responses: an array filled with +1 or -1/no \n\n'
